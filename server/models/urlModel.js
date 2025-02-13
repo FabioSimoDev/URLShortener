@@ -45,7 +45,20 @@ const findShortUrl = (shortUrl) => {
     });
 };
 
+const findAll = () => {
+  return client
+    .query("SELECT * FROM urls")
+    .then((result) => {
+      return result.rows;
+    })
+    .catch((error) => {
+      console.error(error);
+      throw new AppError(500, "DATABASE_ERROR", "Errore nel Database", "/all");
+    });
+};
+
 module.exports = {
   saveShortUrl,
-  findShortUrl
+  findShortUrl,
+  findAll
 };

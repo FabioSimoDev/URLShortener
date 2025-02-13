@@ -1,6 +1,6 @@
 const { getReqData } = require("../utils");
 const { generateShortUrl } = require("../utils");
-const { saveShortUrl, findShortUrl } = require("../models/urlModel");
+const { saveShortUrl, findShortUrl, findAll } = require("../models/urlModel");
 const { handleError } = require("../errorHandler");
 const AppError = require("../AppError");
 
@@ -84,7 +84,22 @@ const getShortUrl = (req, res) => {
     });
 };
 
+//@descr ottiene tutti gli URL accorciati
+//@route GET /all
+const getAll = (req, res) => {
+  findAll()
+    .then((result) => {
+      res.writeHead(200, { "Content-Type": "application/JSON" });
+      res.end(JSON.stringify(result));
+    })
+    .catch((error) => {
+      console.error(error);
+      handleError(res, error);
+    });
+};
+
 module.exports = {
   createShortUrl,
-  getShortUrl
+  getShortUrl,
+  getAll
 };
