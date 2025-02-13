@@ -1,6 +1,6 @@
 const { getReqData } = require("../utils");
 const { generateShortUrl } = require("../utils");
-const { saveShortUrl } = require("../models/urlModel");
+const { saveShortUrl, findShortUrl } = require("../models/urlModel");
 const { handleError } = require("../errorHandler");
 const AppError = require("../AppError");
 
@@ -55,6 +55,36 @@ const createShortUrl = (req, res) => {
     });
 };
 
+//@descr ottiene un URL corto dal database
+//@route GET '/:url'
+const getShortUrl = (req, res) => {
+  const url = req.url.substring(1);
+  try {
+    if (!url.length)
+      throw new AppError(400, "INVALID_PARAMETER", "Manca l'URL", req.url);
+  } catch (error) {
+    handleError(res, error);
+  }
+
+  findShortUrl(url)
+    .then((original_url) => {
+      if (!original_url)
+        throw new AppError(
+          404,
+          "NOT_FOUND",
+          "A questo URL corto non è associato nessun URL",
+          req.url
+        );
+      res.writeHead(301, { "Content-Type": "application/JSON" });
+      res.end(JSON.stringify({ Location: original_url }));
+    })
+    .catch((error) => {
+      console.error(error);
+      handleError(res, error);
+    });
+};
+
 module.exports = {
-  createShortUrl
+  createShortUrl,
+  getShortUrl
 };

@@ -28,6 +28,24 @@ const saveShortUrl = (shortUrl, originalUrl) => {
     });
 };
 
+const findShortUrl = (shortUrl) => {
+  return client
+    .query("SELECT original_url FROM urls WHERE short_url = $1", [shortUrl])
+    .then((result) => {
+      return result.rows[0].original_url;
+    })
+    .catch((error) => {
+      console.error(error);
+      throw new AppError(
+        500,
+        "DATABASE_ERROR",
+        "Errore nel Database",
+        `/${shortUrl}`
+      );
+    });
+};
+
 module.exports = {
-  saveShortUrl
+  saveShortUrl,
+  findShortUrl
 };

@@ -2,7 +2,7 @@ const https = require("https");
 const fs = require("fs");
 const { URL } = require("url");
 const { generateShortUrl } = require("../utils");
-const { createShortUrl } = require("../controllers/urlController");
+const { createShortUrl, getShortUrl } = require("../controllers/urlController");
 const { handleError } = require("../errorHandler");
 const AppError = require("../AppError");
 
@@ -15,8 +15,12 @@ const server = https.createServer(options, async (req, res) => {
   //   console.log(req);
   //   const parsedUrl = new URL(`https://` + req.headers.host + req.url);
   //   console.log(parsedUrl);
+  console.log(req.url);
   if (req.method === "POST" && req.url === "/shorten") {
     createShortUrl(req, res);
+  }
+  if (req.method === "GET" && req.url.startsWith("/")) {
+    getShortUrl(req, res);
   } else {
     handleError(
       res,
