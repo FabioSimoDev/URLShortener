@@ -4,6 +4,7 @@ const { URL } = require("url");
 const { generateShortUrl } = require("../utils");
 const { createShortUrl } = require("../controllers/urlController");
 const { handleError } = require("../errorHandler");
+const AppError = require("../AppError");
 
 const options = {
   key: fs.readFileSync("certs/server.key"),
@@ -17,7 +18,10 @@ const server = https.createServer(options, async (req, res) => {
   if (req.method === "POST" && req.url === "/shorten") {
     createShortUrl(req, res);
   } else {
-    handleError(res, 404, "Endpoint non trovato o metodo non valido.");
+    handleError(
+      res,
+      new AppError(404, "ENDPOINT_NOT_FOUND", "Endpoint non trovato", req.url)
+    );
   }
 });
 

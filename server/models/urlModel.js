@@ -1,3 +1,4 @@
+const AppError = require("../AppError");
 const client = require("../src/db");
 
 const saveShortUrl = (shortUrl, originalUrl) => {
@@ -9,10 +10,20 @@ const saveShortUrl = (shortUrl, originalUrl) => {
     .then((result) => result.rows[0].short_url)
     .catch((error) => {
       if (error.code === "23505") {
-        throw { status: 409, message: "Questo URL è già stato accorciato" };
+        throw new AppError(
+          409,
+          "URL_ALREADY_EXIST",
+          "Questo URL è già stato accorciato",
+          "/shorten"
+        );
       } else {
         console.error(error);
-        throw { status: 500, message: "Errore nel DataBase" };
+        throw new AppError(
+          500,
+          "DATABASE_ERROR",
+          "Errore nel Database",
+          "/shorten"
+        );
       }
     });
 };

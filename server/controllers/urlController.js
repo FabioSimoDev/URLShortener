@@ -2,13 +2,14 @@ const { getReqData } = require("../utils");
 const { generateShortUrl } = require("../utils");
 const { saveShortUrl } = require("../models/urlModel");
 const { handleError } = require("../errorHandler");
+const AppError = require("../AppError");
 
 const validateUrl = (urlString) => {
+  //TODO: aggiungere 'https://' prima di qualunque testo renderà questa funzione inutile, in quanto ogni stringa verrà considerata un url valido. modificare con un RegEx
   try {
     if (!urlString.startsWith("http://") && !urlString.startsWith("https://")) {
       urlString = "https://" + urlString;
     }
-    console.log(urlString);
     new URL(urlString);
     return null;
   } catch (e) {
@@ -25,14 +26,21 @@ const createShortUrl = (req, res) => {
       try {
         parsedBody = JSON.parse(body);
       } catch (error) {
-        throw { status: 400, message: "Formato JSON non valido" };
+        throw new AppError(
+          400,
+          "INVALID_JSON",
+          "Formato JSON non valido",
+          req.url
+        );
       }
       const { original_url } = parsedBody;
 
-      if (!original_url) throw { status: 400, message: "Manca l'URL" };
+      if (!original_url)
+        throw new AppError(400, "INVALID_PAYLOAD", "Manca l'URL", req.url);
 
       const validationError = validateUrl(original_url);
-      if (validationError) throw { status: 400, message: validationError };
+      if (validationError)
+        throw new AppError(400, "INVALID_URL", validationError, req.url);
 
       const shortUrl = generateShortUrl(original_url);
       return saveShortUrl(shortUrl, original_url);
@@ -43,9 +51,7 @@ const createShortUrl = (req, res) => {
     })
     .catch((error) => {
       console.error(error);
-      const statusCode = error.status || 500;
-      const message = error.message || "Errore interno del server";
-      handleError(res, statusCode, message);
+      handleError(res, error);
     });
 };
 
