@@ -14,9 +14,12 @@ const options = {
 };
 
 const server = https.createServer(options, async (req, res) => {
-  //   console.log(req);
-  //   const parsedUrl = new URL(`https://` + req.headers.host + req.url);
-  //   console.log(parsedUrl);
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader(
+    "Access-Control-Allow-Methods",
+    "GET, POST, PUT, DELETE, OPTIONS"
+  );
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
   console.log(req.url);
   if (req.method === "POST" && req.url === "/shorten") {
     createShortUrl(req, res);
