@@ -4,7 +4,6 @@ export function UrlShortener() {
       <p className="text-lg font-semibold text-white">URL Shortener</p>
       <input
         type="text"
-        value={""}
         placeholder="https://example.com/your-long-url"
         className="transition-all duration-300 dark:bg-white/50 dark:text-black dark:placeholder-black/50 bg-transparent rounded-full border-0 text-gray-300 placeholder-white/50 w-full p-2"
       />
