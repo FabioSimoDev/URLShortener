@@ -1,9 +1,10 @@
 import { useState, useCallback, useEffect, useRef } from "react";
 
 const useFetch = (url, options = {}) => {
+  const { lazy = false, ...fetchOptions } = options;
   const [data, setData] = useState(null);
   const [error, setError] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(!lazy);
   const abortControllerRef = useRef(null);
 
   const fetchData = useCallback(async (customOptions = {}) => {
@@ -13,8 +14,8 @@ const useFetch = (url, options = {}) => {
     const controller = new AbortController();
     abortControllerRef.current = controller;
 
-    const fetchOptions = {
-      ...options,
+    const combinedOptions = {
+      ...fetchOptions,
       ...customOptions,
       signal: controller.signal
     };
@@ -23,7 +24,8 @@ const useFetch = (url, options = {}) => {
     setError(null);
 
     try {
-      const res = await fetch(url, fetchOptions);
+      console.log(combinedOptions);
+      const res = await fetch(url, combinedOptions);
       if (!res.ok) {
         throw new Error("Errore: " + res.status);
       }
@@ -39,13 +41,13 @@ const useFetch = (url, options = {}) => {
   }, []);
 
   useEffect(() => {
-    fetchData();
+    if (!lazy) fetchData();
     return () => {
       if (abortControllerRef.current) {
         abortControllerRef.current.abort();
       }
     };
-  }, [fetchData]);
+  }, [fetchData, lazy]);
 
   return { data, error, loading, refetch: fetchData };
 };

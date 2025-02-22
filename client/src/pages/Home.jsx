@@ -6,7 +6,8 @@ import { UrlShortener } from "../components/UrlShortener";
 
 const Home = () => {
   const { data, loading, error, refetch } = useFetch(
-    "https://localhost:3000/all"
+    "https://localhost:3000/all",
+    { lazy: true }
   );
   const { isDarkMode: darkMode, toggleTheme: setDarkMode } =
     useContext(ThemeContext);
