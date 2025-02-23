@@ -47,7 +47,7 @@ const findShortUrl = (shortUrl) => {
     })
     .catch((error) => {
       console.error(error);
-      if (error instanceof AppError && error.status === 404) throw error;
+      if (error instanceof AppError) throw error;
       throw new AppError(
         500,
         "DATABASE_ERROR",
@@ -69,8 +69,28 @@ const findAll = () => {
     });
 };
 
+const findMostUsedUrls = (limit) => {
+  return client
+    .query(
+      "SELECT short_url, original_url FROM urls ORDER BY used DESC LIMIT $1",
+      [limit]
+    )
+    .then((result) => {
+      if (result.rows.length === 0) {
+        throw new AppError(404, "NOT_FOUND", "Nessun URL trovato", "/top");
+      }
+      return result.rows;
+    })
+    .catch((error) => {
+      console.error(error);
+      if (error instanceof AppError) throw error;
+      throw new AppError(500, "DATABASE_ERROR", "Errore nel Database", "/top");
+    });
+};
+
 module.exports = {
   saveShortUrl,
   findShortUrl,
-  findAll
+  findAll,
+  findMostUsedUrls
 };

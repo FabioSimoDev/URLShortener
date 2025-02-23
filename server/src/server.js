@@ -3,7 +3,8 @@ const fs = require("fs");
 const {
   createShortUrl,
   getShortUrl,
-  getAll
+  getAll,
+  getMostUsedUrls
 } = require("../controllers/urlController");
 const { handleError } = require("../errorHandler");
 const AppError = require("../AppError");
@@ -25,6 +26,8 @@ const server = https.createServer(options, async (req, res) => {
     createShortUrl(req, res);
   } else if (req.method === "GET" && req.url === "/all") {
     getAll(req, res);
+  } else if (req.method === "GET" && req.url === "/top") {
+    getMostUsedUrls(req, res);
   } else if (req.method === "GET" && req.url.startsWith("/")) {
     getShortUrl(req, res);
   } else {
