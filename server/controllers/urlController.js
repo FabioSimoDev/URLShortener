@@ -1,6 +1,11 @@
 const { getReqData } = require("../utils");
 const { generateShortUrl } = require("../utils");
-const { saveShortUrl, findShortUrl, findAll } = require("../models/urlModel");
+const {
+  saveShortUrl,
+  findShortUrl,
+  findAll,
+  findMostUsedUrls
+} = require("../models/urlModel");
 const { handleError } = require("../errorHandler");
 const AppError = require("../AppError");
 const validator = require("validator");
@@ -19,6 +24,24 @@ const validateUrl = (urlString) => {
   } else {
     return "URL non valido";
   }
+};
+
+//@descr Ottiene gli URL più usati
+//@route GET /top
+const getMostUsedUrls = (req, res) => {
+  const url = new URL(req.url, `https://${req.headers.host}`);
+  const queryParams = url.searchParams;
+  const limit = queryParams.get("limit") || 10;
+
+  findMostUsedUrls(limit)
+    .then((mostUsedUrls) => {
+      res.writeHead(200, { "Content-Type": "application/JSON" });
+      res.end(JSON.stringify(mostUsedUrls));
+    })
+    .catch((error) => {
+      console.error(error);
+      handleError(res, error);
+    });
 };
 
 //@descr Crea un nuovo "URL" accorciato
@@ -111,5 +134,6 @@ const getAll = (req, res) => {
 module.exports = {
   createShortUrl,
   getShortUrl,
-  getAll
+  getAll,
+  getMostUsedUrls
 };
