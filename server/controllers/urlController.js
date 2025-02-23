@@ -3,16 +3,20 @@ const { generateShortUrl } = require("../utils");
 const { saveShortUrl, findShortUrl, findAll } = require("../models/urlModel");
 const { handleError } = require("../errorHandler");
 const AppError = require("../AppError");
+const validator = require("validator");
 
 const validateUrl = (urlString) => {
   //TODO: aggiungere 'https://' prima di qualunque testo renderà questa funzione inutile, in quanto ogni stringa verrà considerata un url valido. modificare con un RegEx
-  try {
-    if (!urlString.startsWith("http://") && !urlString.startsWith("https://")) {
-      urlString = "https://" + urlString;
-    }
-    new URL(urlString);
+  //update: ho usato una libreria per non reinventare la ruota, ma sarebbe stato meglio usare un RegEx
+  const options = {
+    require_protocol: true,
+    require_valid_protocol: true,
+    require_tld: true,
+    protocols: ["http", "https"]
+  };
+  if (validator.isURL(urlString, options)) {
     return null;
-  } catch (e) {
+  } else {
     return "URL non valido";
   }
 };
@@ -33,7 +37,13 @@ const createShortUrl = (req, res) => {
           req.url
         );
       }
-      const { original_url } = parsedBody;
+      let { original_url } = parsedBody;
+
+      if (
+        !original_url.startsWith("http://") &&
+        !original_url.startsWith("https://")
+      )
+        original_url = "https://" + original_url;
 
       if (!original_url)
         throw new AppError(400, "INVALID_PAYLOAD", "Manca l'URL", req.url);
@@ -75,8 +85,8 @@ const getShortUrl = (req, res) => {
           "A questo URL corto non è associato nessun URL",
           req.url
         );
-      res.writeHead(301, { "Content-Type": "application/JSON" });
-      res.end(JSON.stringify({ Location: original_url }));
+      res.writeHead(301, { Location: original_url });
+      res.end();
     })
     .catch((error) => {
       console.error(error);
