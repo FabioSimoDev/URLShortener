@@ -1,6 +1,8 @@
 import useFetch from "../hooks/useFetch";
 import useInput from "../hooks/useInput";
 //TODO: trova un modo pe rrendere fluido il cambio di dimensioni del div quando compare il link accorciato
+//TODO: aggiungi la funzionalità di copia del link accorciato
+//TODO: per ora il link localhost:3000 è hardcoded, cambialo in una variabile d'ambiente
 
 export function UrlShortener() {
   const { value: url, onChange } = useInput("");
@@ -35,7 +37,22 @@ export function UrlShortener() {
       </button>
       {loading && <p>loading...</p>}
       {error && <p className="text-red-500">{error.message}</p>}
-      {data && !error && <p>link corto: {data.short_url}</p>}
+      {data && !error && (
+        <div className="mt-4 p-2 bg-gray-700 rounded-lg">
+          {/* <p className="text-white">Shortened URL:</p> */}
+          <div className="flex items-center">
+            <input
+              type="text"
+              readOnly
+              value={`https://localhost:3000/${data.short_url}`}
+              className="bg-gray-600 text-white rounded-l-lg p-2 w-full"
+            />
+            <button className="bg-blue-500 hover:bg-blue-600 text-white p-2 rounded-r-lg">
+              Copy
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
