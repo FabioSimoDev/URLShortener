@@ -8,6 +8,11 @@ export function UrlShortener() {
     "https://localhost:3000/shorten",
     { lazy: true, method: "POST" }
   );
+  const handleSubmit = () => {
+    if (url.trim() === "") return;
+    refetch({ body: JSON.stringify({ original_url: url }) });
+  };
+
   return (
     <div className="bg-gray-800 p-4 rounded-2xl shadow-xl w-96">
       <p className="text-lg font-semibold text-white">URL Shortener</p>
@@ -19,12 +24,17 @@ export function UrlShortener() {
         className="transition-all duration-300 dark:bg-white/50 dark:text-black dark:placeholder-black/50 bg-transparent rounded-full border-0 text-gray-300 placeholder-white/50 w-full p-2"
       />
       <button
-        className=" mt-4 w-full bg-blue-500 hover:bg-blue-600 text-white py-2 rounded-lg text-lg"
-        onClick={() => refetch({ body: JSON.stringify({ original_url: url }) })}
+        className={` mt-4 w-full text-white py-2 rounded-lg text-lg ${
+          url.trim() === ""
+            ? "cursor-not-allowed bg-gray-500/50"
+            : "cursor-pointer bg-blue-500 hover:bg-blue-600"
+        }`}
+        onClick={() => handleSubmit()}
       >
         Accorcia link
       </button>
       {loading && <p>loading...</p>}
+      {error && <p className="text-red-500">{error.message}</p>}
       {data && !error && <p>link corto: {data.short_url}</p>}
     </div>
   );

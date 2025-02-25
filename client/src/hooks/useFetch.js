@@ -27,7 +27,8 @@ const useFetch = (url, options = {}) => {
       console.log(combinedOptions);
       const res = await fetch(url, combinedOptions);
       if (!res.ok) {
-        throw new Error("Errore: " + res.status);
+        const errorPayload = await res.json();
+        throw new Error(errorPayload.message || "Qualcosa è andato storto...");
       }
       const json = await res.json();
       setData(json);

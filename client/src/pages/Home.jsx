@@ -3,18 +3,19 @@ import { ThemeContext } from "../contexts/ThemeContextFile";
 import useFetch from "../hooks/useFetch";
 import { DarkModeToggle } from "../components/DarkModeToggle";
 import { UrlShortener } from "../components/UrlShortener";
+import Board from "../components/Board";
 
 const Home = () => {
   const { data, loading, error, refetch } = useFetch(
-    "https://localhost:3000/all",
-    { lazy: true }
+    "https://localhost:3000/top",
+    { lazy: false }
   );
   const { isDarkMode: darkMode, toggleTheme: setDarkMode } =
     useContext(ThemeContext);
 
   return (
-    <>
-      <main className="flex flex-col items-center text-center space-y-6 relative z-10">
+    <div className="flex justify-evenly w-full px-10">
+      <main className="flex flex-col flex-1 items-center text-center space-y-6 relative z-10">
         <h2 className="text-5xl font-bold">
           Transform Your <span className="text-blue-400">Links</span> in a Click
         </h2>
@@ -27,10 +28,11 @@ const Home = () => {
           refresh test
         </button>
       </main>
+
       {loading && <p>Loading...</p>}
       {error && <p>Error: {error.message}</p>}
-      {data && <p>{JSON.stringify(data)}</p>}
-    </>
+      {data && <Board list={data} />}
+    </div>
   );
 };
 
