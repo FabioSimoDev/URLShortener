@@ -10,12 +10,7 @@ const saveShortUrl = (shortUrl, originalUrl) => {
     .then((result) => result.rows[0].short_url)
     .catch((error) => {
       if (error.code === "23505") {
-        throw new AppError(
-          409,
-          "URL_ALREADY_EXIST",
-          "Questo URL è già stato accorciato",
-          "/shorten"
-        );
+        return shortUrl;
       } else {
         console.error(error);
         throw new AppError(
