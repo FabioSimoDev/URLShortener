@@ -1,8 +1,12 @@
 import useFetch from "../hooks/useFetch";
 import useInput from "../hooks/useInput";
-//TODO: trova un modo pe rrendere fluido il cambio di dimensioni del div quando compare il link accorciato
+import { useRef, useState, useEffect } from "react";
 //TODO: aggiungi la funzionalità di copia del link accorciato
 //TODO: per ora il link localhost:3000 è hardcoded, cambialo in una variabile d'ambiente
+//TODO: probabilmente è meglio usare un tag <form> per il form, in modo da poter usare il tasto invio per accorciare il link
+//TODO: aggiungi un'animazione al bottone di copia
+//TODO: probabilmente sarebbe meglio creare un componente per il risultato del link accorciato
+//TODO: probabilmente sarebbe meglio creare un hook per l'animazione del div del risultato
 
 export function UrlShortener() {
   const { value: url, onChange } = useInput("");
@@ -10,10 +14,22 @@ export function UrlShortener() {
     "https://localhost:3000/shorten",
     { lazy: true, method: "POST" }
   );
+
+  const [resultHeight, setResultHeight] = useState(0);
+  const resultRef = useRef(null);
+
   const handleSubmit = () => {
     if (url.trim() === "") return;
     refetch({ body: JSON.stringify({ original_url: url }) });
   };
+
+  useEffect(() => {
+    if (resultRef.current) {
+      setResultHeight(resultRef.current.scrollHeight);
+    } else {
+      setResultHeight(0);
+    }
+  }, [data]);
 
   return (
     <div className="bg-gray-800 p-4 rounded-2xl shadow-xl w-96">
@@ -37,22 +53,28 @@ export function UrlShortener() {
       </button>
       {loading && <p>loading...</p>}
       {error && <p className="text-red-500">{error.message}</p>}
-      {data && !error && (
-        <div className="mt-4 p-2 bg-gray-700 rounded-lg">
-          {/* <p className="text-white">Shortened URL:</p> */}
-          <div className="flex items-center">
-            <input
-              type="text"
-              readOnly
-              value={`https://localhost:3000/${data.short_url}`}
-              className="bg-gray-600 text-white rounded-l-lg p-2 w-full"
-            />
-            <button className="bg-blue-500 hover:bg-blue-600 text-white p-2 rounded-r-lg">
-              Copy
-            </button>
+      <div
+        style={{ height: data ? resultHeight : 0 }}
+        className={`transition-all duration-600 ease-out overflow-hidden ${
+          data && "mt-4"
+        }`}
+      >
+        {data && !error && (
+          <div ref={resultRef} className="py-4 px-2 bg-gray-700 rounded-lg">
+            <div className="flex items-center">
+              <input
+                type="text"
+                readOnly
+                value={`https://localhost:3000/${data.short_url}`}
+                className="bg-gray-600 text-white rounded-l-lg p-2 w-full"
+              />
+              <button className="bg-blue-500 hover:bg-blue-600 text-white p-2 rounded-r-lg">
+                Copy
+              </button>
+            </div>
           </div>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 }
