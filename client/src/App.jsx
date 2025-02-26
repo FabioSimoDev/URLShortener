@@ -16,7 +16,7 @@ function App() {
         }`}
       >
         <div
-          className="absolute inset-0 opacity-10"
+          className="absolute inset-0 opacity-10 animate-gridMove"
           style={{
             backgroundImage: darkMode
               ? "linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)"
