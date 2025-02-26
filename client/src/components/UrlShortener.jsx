@@ -6,7 +6,6 @@ import TextArea from "./TextArea";
 //TODO: per ora il link localhost:3000 è hardcoded, cambialo in una variabile d'ambiente
 //TODO: probabilmente è meglio usare un tag <form> per il form, in modo da poter usare il tasto invio per accorciare il link
 //TODO: aggiungi un'animazione al bottone di copia
-//TODO: probabilmente sarebbe meglio creare un componente per il risultato del link accorciato
 
 export function UrlShortener() {
   const { value: url, onChange } = useInput("");
