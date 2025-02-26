@@ -1,7 +1,19 @@
+import { Link } from "react-router";
+
 export function Header() {
   return (
-    <header className="absolute top-5 flex justify-between w-full px-8">
-      <h1 className="text-xl font-bold">Link...</h1>
+    <header className="absolute top-0 flex justify-between w-full px-8 py-5">
+      <h1 className="text-xl font-bold">
+        Thats<span className="text-blue-400">Tiny</span>
+      </h1>
+      <nav>
+        <Link
+          to="/about"
+          className="text-lg font-medium dark:hover:bg-white/20 hover:bg-black/20 rounded-xl p-2"
+        >
+          About
+        </Link>
+      </nav>
     </header>
   );
 }

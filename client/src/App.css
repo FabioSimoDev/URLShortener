@@ -1,6 +1,19 @@
 @import "tailwindcss";
 @custom-variant dark (&:where(.dark, .dark *));
 
+@keyframes gridMove {
+  0% {
+    background-position: 0 0;
+  }
+  100% {
+    background-position: -80px -80px;
+  }
+}
+
+.animate-gridMove {
+  animation: gridMove 4s linear infinite;
+}
+
 /* #root {
   max-width: 1280px;
   margin: 0 auto;
